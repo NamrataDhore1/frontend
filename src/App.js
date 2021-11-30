@@ -27,14 +27,21 @@ import AddReaders from './components/addreaders';
 import UpdateReaders from './components/updatereaders';
 import Users from './components/user';
 import AddUsers from './components/addusers';
-
-
+import UpdateUsers from './components/updateusers';
+import BooksReturn from './components/bookreturn';
+import ReturnBookForm from './components/addreturnbook';
+import UpdateReturn from './components/updatereturnbook';
+import Logout from './components/logout';
+import Login from "./components/login";
 function App() {
   return (
     <div className="App">
      <MenuAppBar/>
        <Switch>
+       <Route path="/login" component={Login} />
+       <Route  path="/users/update/:userid" component={UpdateUsers}/>
        <Route exact path="/readers/update/:id" component={UpdateReaders} />
+       <Route path="/bookreturn/update/:id" component={UpdateReturn}/>
        <Route path="/damagedbook/update/:id" component={UpdateDamaged}/>
        <Route path="/booksorder/update/:orderId" component={UpdateOrder}/>
        <Route path="/author/add" component ={AuthorAdd}/>
@@ -58,7 +65,11 @@ function App() {
       <Route path="/readers" component={Readers} />
       <Route path="/users/addusers" component={AddUsers}/>
       <Route path="/users" component={Users} />
-      <Publishers/>
+      <Route path="/bookreturn" component={BooksReturn} />
+      <Route path="/lms/viewbooklist/add" component={ReturnBookForm} />
+      <Route path="/logout" component={Logout} />
+
+     
       </Switch>
     </div>
   );

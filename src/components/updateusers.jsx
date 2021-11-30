@@ -4,13 +4,12 @@ import axios from "axios";
 class UpdateUsers extends React.Component {
   state = {
     users: {
-      userid: 0,
       firstName: "",
       lastName: "",
       mobileno: "",
       email: "",
       password: "",
-      dateofbirth: Date,
+      dateofbirth: "",
       role: "",
     },
   };
@@ -18,16 +17,16 @@ class UpdateUsers extends React.Component {
   componentDidMount() {
     axios
       .get(
-        "http://localhost:8081/users/userid/${this.props.match.params.userid}"
+        `http://localhost:8081/api/viewUserById/${this.props.match.params.userid}`
       )
       .then((res) => {
         const users = { ...this.state.users };
-        users.firstName = res.data.firstname;
-        users.lastName = res.data.lastname;
+        users.firstName = res.data.firstName;
+        users.lastName = res.data.lastName;
         users.mobileno = res.data.mobileno;
-        users.dateofbirth = res.data.dataofbirth;
-        users.email = res.data.login.email;
-        users.password = res.data.login.password;
+        users.dateofbirth = res.data.dateofbirth;
+        users.email = res.data.email;
+        users.password = res.data.password;
         users.role = res.data.role;
         console.log(res.data);
         console.log(users);
@@ -36,10 +35,8 @@ class UpdateUsers extends React.Component {
       .catch((err) => console.log(err));
   }
   handleChange = (event) => {
-    const users = { ...this.state.users }; // copying student object
-    users[event.target.name] = event.target.value; // student[fullName] = "ab"
-    //student.fullName = "ab";
-    //student[fullName]="ab";
+    const users = { ...this.state.users };
+    users[event.target.name] = event.target.value;
     console.log(event.target.name);
     console.log(event.target.value);
     this.setState({ users: users });
@@ -48,23 +45,17 @@ class UpdateUsers extends React.Component {
     event.preventDefault();
     console.log("handleSubmit");
     const users = {
-      contactNo: this.state.users.mobileno,
+      mobileno: this.state.users.mobileno,
       firstName: this.state.users.firstName,
       lastName: this.state.users.lastName,
       dateofbirth: this.state.users.dateofbirth,
-
-      login: {
-        email: this.state.users.email,
-        password: this.state.users.password,
-        role: this.state.users.role,
-      },
+      email: this.state.users.email,
+      password: this.state.users.password,
+      role: this.state.users.role,
       userid: this.props.match.params.userid,
     };
     axios
-      .put(
-        `http://localhost:8081/users/${this.props.match.params.userid}`,
-        users
-      )
+      .put("http://localhost:8081/api/updateUser/", users)
       .then((res) => {
         this.props.history.push("/users");
       })
@@ -77,26 +68,39 @@ class UpdateUsers extends React.Component {
         <h3>Update users</h3>
         <form onSubmit={this.handleSubmit} className="w-50 mx-auto border p-3">
           <div className="mb-3">
-            <label for="exampleInputName" className="form-label">
-              Firstname
+            <label for="exampleInputfirstName" className="form-label">
+              First Name
             </label>
             <input
               type="text"
               className="form-control"
-              id="exampleInputName"
+              id="exampleInputfirstName"
               value={this.state.users.firstName}
               name="firstName"
               onChange={this.handleChange}
             />
           </div>
           <div className="mb-3">
-            <label for="exampleInputContactNo" className="form-label">
-              Contact No
+            <label for="exampleInputlastName" className="form-label">
+              Last Name
+            </label>
+            <input
+              type="text"
+              className="form-control"
+              id="exampleInputlastName"
+              value={this.state.users.lastName}
+              name="lastName"
+              onChange={this.handleChange}
+            />
+          </div>
+          <div className="mb-3">
+            <label for="exampleInputmobileno" className="form-label">
+              Contact Number
             </label>
             <input
               type="tel"
               className="form-control"
-              id="exampleInputContactNo"
+              id="exampleInputmobileno"
               aria-describedby="emailHelp"
               value={this.state.users.mobileno}
               name="mobileno"
@@ -104,13 +108,26 @@ class UpdateUsers extends React.Component {
             />
           </div>
           <div className="mb-3">
-            <label for="exampleInputEmail1" className="form-label">
+            <label for="exampleInputDateOfBirth" className="form-label">
+              Date OF Birth
+            </label>
+            <input
+              type="date"
+              className="form-control"
+              id="exampleInputDateOfBirth"
+              value={this.state.users.dateofbirth}
+              name="dateofbirth"
+              onChange={this.handleChange}
+            />
+          </div>
+          <div className="mb-3">
+            <label for="exampleInputEmail" className="form-label">
               Email
             </label>
             <input
               type="email"
               className="form-control"
-              id="exampleInputEmail1"
+              id="exampleInputEmail"
               aria-describedby="emailHelp"
               value={this.state.users.email}
               name="email"
@@ -138,7 +155,7 @@ class UpdateUsers extends React.Component {
             onChange={this.handleChange}
           >
             <option selected>Select Role</option>
-            <option value="users">users</option>
+            <option value="user">User</option>
             <option value="admin">Admin</option>
           </select>
           <div className="d-grid gap-2">

@@ -1,44 +1,88 @@
-import * as React from 'react';
-import AppBar from '@mui/material/AppBar';
-import Box from '@mui/material/Box';
-import Toolbar from '@mui/material/Toolbar';
-import Typography from '@mui/material/Typography';
-import Button from '@mui/material/Button';
-import IconButton from '@mui/material/IconButton';
-import MenuIcon from '@mui/icons-material/Menu';
-import { NavLink } from 'react-router-dom'
+import { NavLink } from "react-router-dom";
+import {
+  AppBar,
+  Toolbar,
+  Typography,
+  Button,
+  IconButton,
+  Badge,
+} from "@mui/material";
 
-export default function ButtonAppBar() {
+import { useSelector } from "react-redux";
+import Users from "./user"
+const Nav = () => {
+  //const classes = useStyles();
+  const login = useSelector((state) => state.login);
+  console.log(login);
   return (
-    <Box sx={{ flexGrow: 1 }}>
+    <div>
       <AppBar position="static">
         <Toolbar>
-          <IconButton
-            size="large"
-            edge="start"
-            color="inherit"
-            aria-label="menu"
-            sx={{ mr: 2 }}
+          <Typography
+            variant="h6"
+            style={{
+              padding: "5px",
+            }}
           >
-            <MenuIcon />
-          </IconButton>
-          
-          <Button href="/home" color="inherit">Home</Button>
-          <Button href="/publisher" color="inherit">Publisher</Button>
-          <Button href="/author" color="inherit">Author</Button>
-          <Button href="/bookissued" color="inherit">Bookissued</Button>
-          <Button href="/books" color="inherit">Books</Button>
-          <Button href="/booksorder" color="inherit">BooksOrder</Button>
-          <Button href="/damagedbook" color="inherit">DamagedBooks</Button>
-          <Button href="/readers" color="inherit">Readers</Button>
-          <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
-             Library Managment System
+            LMS
           </Typography>
-          <Button color="inherit">Logout</Button>
-          <Button color="inherit">Login</Button>
-          <Button color="inherit">Ragistration</Button>
+          <Button color="inherit" component={NavLink} to="/home">
+            Home
+          </Button>
+          {login.loggedIn && login.role == "admin" && (
+            <Button color="inherit" component={NavLink} to="/author">
+              Authors
+            </Button>
+          )}
+           {login.loggedIn && login.role == "admin" &&(
+            <Button  color="inherit" component={NavLink} to="/publisher">Publisher
+            </Button>
+          )}
+          <Button color="inherit" component={NavLink} to="/books">
+            Books
+          </Button>
+          {/*   <Button color="inherit" component={NavLink} to="/users">
+            Users
+          </Button> */}
+          {login.loggedIn && login.role == "admin" && (
+            <Button
+              color="inherit"
+              style={{ marginRight: "auto" }}
+              component={NavLink}
+              to="/users"
+            >
+              Users
+            </Button>
+          )}
+          {login.loggedIn ? (
+            <Button color="inherit" component={NavLink} to="/logout">
+              Logout
+            </Button>
+          ) : (
+            <Button color="inherit" component={NavLink} to="/login">
+              Login
+            </Button>
+          )}
+          {/* <Button color="inherit" component={NavLink} to="/register">
+            Register
+          </Button> */}
         </Toolbar>
       </AppBar>
-    </Box>
+    </div>
   );
-}
+};
+
+export default Nav;
+
+
+/*<Button href="/home" color="inherit">Home</Button>
+<Button href="/publisher" color="inherit">Publisher</Button>
+<Button href="/author" color="inherit">Author</Button>
+<Button href="/bookissued" color="inherit">Bookissued</Button>
+<Button href="/books" color="inherit">Books</Button>
+<Button href="/booksorder" color="inherit">BooksOrder</Button>
+<Button href="/damagedbook" color="inherit">DamagedBooks</Button>
+<Button href="/readers" color="inherit">Readers</Button>
+<Button href="/users" color="inherit">User</Button>
+<Button href="/bookreturn" color="inherit">BookReturn</Button>
+<Button href="/login" color="inherit">Login</Button>*/

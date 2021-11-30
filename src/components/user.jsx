@@ -5,8 +5,6 @@ import { Link } from "react-router-dom";
 class Users extends React.Component {
   state = {
     users: [],
-
-    admin: [],
   };
   componentDidMount() {
     axios
@@ -17,6 +15,12 @@ class Users extends React.Component {
       })
       .catch((error) => console.log(error));
   }
+  handleDelete = (id) => {
+    axios.delete(`http://localhost:8081/api/deleteUser/${id}`).then((res) => {
+      const auth = this.state.users.filter((au) => au.userid != id);
+      this.setState({ users: auth });
+    });
+  };
   render() {
     return (
       <div className="container">
@@ -33,21 +37,33 @@ class Users extends React.Component {
               <th>First Name</th>
               <th>Last Name</th>
               <th>Contact Number</th>
-              <th>Password</th>
               <th>Date Of Birth</th>
-              <th>Email</th>
+              <th colSpan="2">Actions</th>
             </tr>
           </thead>
           <tbody>
             {this.state.users.map((user) => (
               <tr>
                 <td>{user.userid}</td>
-                <td>{user.firstname}</td>
-                <td>{user.lastname}</td>
+                <td>{user.firstName}</td>
+                <td>{user.lastName}</td>
                 <td>{user.mobileno}</td>
-                <td>{user.password}</td>
                 <td>{user.dateofbirth}</td>
-                <td>{user.email}</td>
+                <td>
+                  <Link to={`/users/update/${user.userid}`}>
+                    <input
+                      type="button"
+                      value="Update"
+                      className="btn btn-primary me-2"
+                    />
+                  </Link>
+                  <input
+                    type="button"
+                    value="Delete"
+                    className="btn btn-danger"
+                    onClick={() => this.handleDelete(user.userid)}
+                  />
+                </td>
               </tr>
             ))}
           </tbody>

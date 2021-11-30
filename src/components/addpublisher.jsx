@@ -45,7 +45,7 @@ import {
          .email({ minDomainSegments: 2, tlds: { allow: ["com", "net","org"] } })
          .required(),
          publisherName:Joi.string().max(20).required(),
-         //contactno:Joi.number().required(),
+         //contactno:Joi.number().less(11).required(),
          contactno:Joi.string().trim().regex(/^[0-9]{10}$/).required(),
          address:Joi.string().required(),
          state:Joi.string().required(),

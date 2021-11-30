@@ -1,186 +1,151 @@
-import React, { useState } from "react";
-import { Typography, Button, Grid, Box, TextField, Alert } from "@mui/material";
 import axios from "axios";
-import Joi from "joi-browser";
-const ariaLabel = { "aria-label": "description" };
+import React, { Component } from "react";
 
-const AddUsers = (props) => {
-  const [users, setUser] = useState({
-    firstName: "",
-    lastName: "",
-    dateofbirth: "",
-    email: "",
-    password: "",
-    contactno: "",
-  });
-  const [errors, setErrors] = useState({
-    firstName: "",
-    lastName: "",
-    dateofbirth: "",
-    email: "",
-    password: "",
-    contactno: "",
-  });
-  const [errMsg, setErrMsg] = useState("");
-  const schema = {
-    firstName: Joi.string().required(),
-    lastName: Joi.string().required(),
-    dateofbirth: Joi.date().required(),
-    email: Joi.string()
-      .email({ minDomainSegments: 2, tlds: { allow: ["com", "net"] } })
-      .required(),
-    password: Joi.string().min(3).required(),
-
-    contactno: Joi.number().required(),
+class AddUsers extends React.Component {
+  state = {
+    users: {
+      firstName: "",
+      lastName: "",
+      mobileno: "",
+      dateofbirth: "",
+      email: "",
+      password: "",
+      role: "",
+    },
   };
-  const validate = () => {
-    const errors = {};
-    const result = Joi.validate(users, schema, { abortEarly: false });
-    console.log(result);
-    if (result.error != null)
-      for (let item of result.error.details) {
-        errors[item.path[0]] = item.message;
-      }
-    return Object.keys(errors).length === 0 ? null : errors;
+  handleChange = (event) => {
+    const users = { ...this.state.users };
+    users[event.target.name] = event.target.value;
+    console.log(event.target.name);
+    console.log(event.target.value);
+    this.setState({ users: users });
   };
-  const handleChange = (event) => {
-    console.log("HandleChange");
-    const usr = { ...users };
-    usr[event.target.name] = event.target.value;
-    setUser(usr);
-  };
-  const handleSubmit = (event) => {
+  handleSubmit = (event) => {
     event.preventDefault();
-    console.log("Handle submit");
-    setErrors(validate());
-    console.log(errors);
-    if (errors) return;
+    console.log("handleSubmit");
+    const users = {
+      mobileno: this.state.users.mobileno,
+      firstName: this.state.users.firstName,
+      lastName: this.state.users.lastName,
+      dateofbirth: this.state.users.dateofbirth,
+      email: this.state.users.email,
+      password: this.state.users.password,
+      role: this.state.users.role,
+      userid: 0,
+    };
     axios
-      .post("http://localhost:8081/api/addusers", users)
-      .then((res) => props.history.push("/users"))
-      .catch((err) => {
-        console.log(err.res.data.message);
-        setErrMsg(err.res.data.message);
-      });
+      .post("http://localhost:8081/api/registrationdetails", users)
+      .then((res) => {
+        this.props.history.push("/users");
+      })
+      .catch((err) => console.log(err));
   };
-  return (
-    <div>
-      <Typography variant="h3">Users section</Typography>
-      <Grid container>
-        <Grid item xs={4} style={{ marginLeft: "auto", marginRight: "auto" }}>
-          {errMsg && <Alert severity="error">{errMsg}</Alert>}
-          <form
-            onSubmit={handleSubmit}
-            noValidate
-            style={{
-              border: "1px solid blue",
-              padding: "20px",
-              marginTop: "10px",
-            }}
+
+  render() {
+    return (
+      <div>
+        <h3>Register Form</h3>
+        <form onSubmit={this.handleSubmit} className="w-50 mx-auto border p-3">
+          <div className="mb-3">
+            <label for="exampleInputName" className="form-label">
+              First Name
+            </label>
+            <input
+              type="text"
+              className="form-control"
+              id="exampleInputName"
+              value={this.state.users.firstName}
+              name="firstName"
+              onChange={this.handleChange}
+            />
+          </div>
+          <div className="mb-3">
+            <label for="exampleInputName" className="form-label">
+              Last Name
+            </label>
+            <input
+              type="text"
+              className="form-control"
+              id="exampleInputName"
+              value={this.state.users.lastName}
+              name="lastName"
+              onChange={this.handleChange}
+            />
+          </div>
+          <div className="mb-3">
+            <label for="exampleInputmobileno" className="form-label">
+              Contact Number
+            </label>
+            <input
+              type="tel"
+              className="form-control"
+              id="exampleInputmobileno"
+              aria-describedby="emailHelp"
+              value={this.state.users.mobileno}
+              name="mobileno"
+              onChange={this.handleChange}
+            />
+          </div>
+          <div className="mb-3">
+            <label for="exampleInputDateOfBirth" className="form-label">
+              Date OF Birth
+            </label>
+            <input
+              type="date"
+              className="form-control"
+              id="exampleInputDateOfBirth"
+              value={this.state.users.dateofbirth}
+              name="dateofbirth"
+              onChange={this.handleChange}
+            />
+          </div>
+          <div className="mb-3">
+            <label for="exampleInputEmail1" className="form-label">
+              Email
+            </label>
+            <input
+              type="email"
+              className="form-control"
+              id="exampleInputEmail1"
+              aria-describedby="emailHelp"
+              value={this.state.users.email}
+              name="email"
+              onChange={this.handleChange}
+            />
+          </div>
+          <div className="mb-3">
+            <label for="exampleInputPassword1" className="form-label">
+              Password
+            </label>
+            <input
+              type="password"
+              className="form-control"
+              id="exampleInputPassword1"
+              value={this.state.users.password}
+              name="password"
+              onChange={this.handleChange}
+            />
+          </div>
+          <select
+            className="form-select mb-3"
+            aria-label="Default select example"
+            value={this.state.users.role}
+            name="role"
+            onChange={this.handleChange}
           >
-            <Box mb={3}>
-              <TextField
-                inputProps={ariaLabel}
-                type="text"
-                variant="outlined"
-                fullWidth
-                label="First 
-                      Name"
-                value={users.firstName}
-                name="firstName"
-                onChange={handleChange}
-              />
-              {errors && (
-                <Typography variant="caption">{errors.firstName}</Typography>
-              )}
-            </Box>
-
-            <Box mb={3}>
-              <TextField
-                inputProps={ariaLabel}
-                type=" text"
-                variant="outlined"
-                fullWidth
-                label="LastName"
-                value={users.lastName}
-                name="lastName"
-                onChange={handleChange}
-              />
-              {errors && (
-                <Typography variant="caption">{errors.lastName}</Typography>
-              )}
-            </Box>
-
-            <Box mb={3}>
-              <TextField
-                inputProps={ariaLabel}
-                type="tel"
-                variant="outlined"
-                fullWidth
-                label="Contactno"
-                value={users.contactno}
-                name="contactno"
-                onChange={handleChange}
-              />
-              {errors && (
-                <Typography variant="caption">{errors.contactno}</Typography>
-              )}
-            </Box>
-            <Box mb={3}>
-              <TextField
-                inputProps={ariaLabel}
-                type="email"
-                variant="outlined"
-                fullWidth
-                label="Email"
-                value={users.email}
-                name="email"
-                onChange={handleChange}
-              />
-              {errors && (
-                <Typography variant="caption">{errors.email}</Typography>
-              )}
-            </Box>
-
-            <Box mb={3}>
-              <TextField
-                inputProps={ariaLabel}
-                type="password"
-                variant="outlined"
-                fullWidth
-                label="Password"
-                value={users.password}
-                name="password"
-                onChange={handleChange}
-              />
-              {errors && (
-                <Typography variant="caption">{errors.password}</Typography>
-              )}
-            </Box>
-            <Box mb={3}>
-              <TextField
-                inputProps={ariaLabel}
-                type="date"
-                fullWidth
-                label="Date Of Birth"
-                value={users.dateofbirth}
-                name="dateofbirth"
-                onChange={handleChange}
-              />
-              {errors && (
-                <Typography variant="caption">{errors.dateofbirth}</Typography>
-              )}
-            </Box>
-            <Box mt={3}>
-              <Button variant="contained" type="submit" fullWidth>
-                Submit
-              </Button>
-            </Box>
-          </form>
-        </Grid>
-      </Grid>
-    </div>
-  );
-};
+            <option selected>Select Role</option>
+            <option value="user">User</option>
+            <option value="admin">Admin</option>
+          </select>
+          <div className="d-grid gap-2">
+            <button type="submit" className="btn btn-primary">
+              Submit
+            </button>
+          </div>
+        </form>
+      </div>
+    );
+  }
+}
 
 export default AddUsers;
